@@ -1,0 +1,6 @@
+CMakeFiles/
+*~
+src/*~
+src/include/*~
+src/tests/*~
+CMakeCache.txt
