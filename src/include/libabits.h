@@ -28,6 +28,7 @@
 #include <bitset>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <utility>
 #include <algorithm>
 
@@ -141,6 +142,21 @@ namespace abits {
 	
 	return ret;
       };
+
+    std::string bitsToString()
+      {
+	std::stringstream ss;
+
+	int i=N;
+	while(i>0)
+	  {
+	    --i;
+	    char ch = (char)(store & mask[T]);
+	    ss << ch;
+	    store <<= T;
+	  }
+	return ss.str();
+      };
     
   public:
     // TODO(Todd): implement a default cstor
@@ -148,6 +164,7 @@ namespace abits {
     BaseEnc(const std::string value)
       {
 	assert(T >= num_type::Base2 && T <= num_type::Base64);
+	if(value.size() != N) throw("Bit limb size and string do no match");
 	store = stringToBits(value);
       };
     int getBitLength()
@@ -170,7 +187,8 @@ namespace abits {
     std::ostream& operator<<(std::ostream& os,
 			     const BaseEnc<N>& obj)
     {
-      os << obj.toString();
+      std::string out{obj.bitsToString()};
+      os << out;
       return os;
     }
 }
