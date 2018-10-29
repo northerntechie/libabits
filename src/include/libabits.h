@@ -6,10 +6,10 @@
  * alphabets:
  * 
  * - Binary                    2 bits/symbol
- * - Ternary (Octal)           3 bits/symbol
- * - Quaternary (Hexadecimal)  4 bits/symbol
- * - Quinary                   5 bits/symbol
- * - Senary                    6 bits/symbol
+ * - Ternary, Octal            3 bits/symbol
+ * - Quaternary, Hexadecimal   4 bits/symbol
+ * - Quinary, Duotrigesimal    5 bits/symbol
+ * - Senary, Tetrasexagesimal  6 bits/symbol
  *
  * The library is contained within a single include file (this file)
  * and is easily included in a project.
@@ -21,8 +21,8 @@
  */
 #pragma once
 
-#ifndef __LIBABITS_H__
-#define __LIBABITS_H__
+#ifndef __LIBABITS_HPP__
+#define __LIBABITS_HPP__
 
 #include <cassert>
 #include <bitset>
