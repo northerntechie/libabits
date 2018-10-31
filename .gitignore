@@ -5,3 +5,4 @@ src/include/*~
 src/tests/*~
 CMakeCache.txt
 libabits_tests
+docs/
