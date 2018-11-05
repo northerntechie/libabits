@@ -40,23 +40,25 @@ namespace abits {
     // Numeral system type constants
     // Integral value is the number of bits, length of bit field
     constexpr int Base2 = 1;
-    const int binary = Base2;
-    const int Base4 = 2;
-    const int quaternary = Base4;
-    const int Base8 = 3;
-    const int octal = Base8;
-    const int Base16 = 4;
-    const int hexadecimal = Base16;
-    const int Base32 = 5;
-    const int duotrigesimal = Base32;
-    const int Base64 = 6;
-    const int tetrasexagesimal = Base64;    
+    constexpr int Base4 = 2;
+    constexpr int Base8 = 3;
+    constexpr int Base16 = 4;
+    constexpr int Base32 = 5;
+    constexpr int Base64 = 6;
   }
 
-  // Base64 code to char (ASCII) constexpr map
+  const std::map<int,char> hex_code_char =
+    {
+      {0,'0'},{1,'1'},{2,'2'},{3,'3'},
+      {4,'4'},{5,'5'},{6,'6'},{7,'7'},
+      {8,'8'},{9,'9'},{10,'a'},{11,'b'},
+      {12,'c'},{13,'d'},{14,'e'},{15,'f'}
+    };
+  
+  // Base64 code to char (ASCII) const map
   // All lower bases are subsets of the Base64
   // numeral type.
-  const std::map<int,char> map_code_char =
+  const std::map<int,char> base64_code_char =
     {                                               
       {0,'A'},{1,'B'},{2,'C'},{3,'D'},{4,'E'},      
       {5,'F'},{6,'G'},{7,'H'},{8,'I'},{9,'J'},      
@@ -72,31 +74,32 @@ namespace abits {
       {55,'3'},{56,'4'},{57,'5'},{58,'6'},{59,'7'},
       {60,'8'},{61,'9'},{62,'+'},{63,'/'}
     };
-  constexpr int map_size = sizeof(map_code_char) / sizeof(std::pair<int,int>);
 
-  const static char get_char(int code, int range = map_size-1)
+  constexpr int base64_size = sizeof(base64_code_char) / sizeof(std::pair<int,int>);
+
+  const static char get_char(int code, int range = base64_size-1)
   {
-    assert(range > -1 && range < map_size);
-    auto it = map_code_char.find(code);
-    if(it != map_code_char.end())
+    assert(range > -1 && range < base64_size);
+    auto it = base64_code_char.find(code);
+    if(it != base64_code_char.end())
       return it->second;
     else
       {
 	assert(false);
-	return 0x00;
+	return -1;
       }
   }
 
-  const static int get_code(char character, int range = map_size-1)
+  const static int get_code(char character, int range = base64_size-1)
   {
-    assert(range > -1 && range < map_size);
-    auto it = std::find_if(map_code_char.begin(),
-			   map_code_char.end(),
+    assert(range > -1 && range < base64_size);
+    auto it = std::find_if(base64_code_char.begin(),
+			   base64_code_char.end(),
 			   [&character] (const std::pair<int,char>& pair) -> bool
 			   {
 			     return pair.second == character;
 			   });
-    if(it != map_code_char.end())
+    if(it != base64_code_char.end())
       return it->first;
     else
       {
@@ -104,8 +107,17 @@ namespace abits {
 	return -1;
       }
   }
+
+  const std::string numeral_type[]{
+      "abits::num_type::Base2"s,
+      "abits::num_type::Base4"s,
+      "abits::num_type::Base8"s,
+      "abits::num_type::Base16"s,
+      "abits::num_type::Base32"s,
+      "abits::num_type::Base64"s
+    };
   
-  constexpr static int mask[] =
+  constexpr int mask[] =
     { 0x00,  /* Base0 */
       0x01,  /* Base2 */
       0x03,  /* Base4 */
@@ -116,12 +128,12 @@ namespace abits {
     };
   
   /* Forward declarations */
-  template<int T = num_type::Base16>
-  class base_enc;
+  template<int T = num_type::Base64>
+  class base64_enc;
   
   template<int T>
   std::ostream& operator<<(std::ostream& os,
-			   const base_enc<T>& obj);
+			   const base64_enc<T>& obj);
   /* End of forward declarations */
   
   /**
@@ -130,7 +142,7 @@ namespace abits {
    * integer value.
    */
   template<int T>
-  class base_enc
+  class base64_enc
   {
   private:
     std::vector<bool> _store{};
@@ -152,8 +164,8 @@ namespace abits {
     
   public:
     // TODO(Todd): implement a default ctor
-    base_enc() {};
-    base_enc(const std::string value)
+    base64_enc() {};
+    base64_enc(const std::string value)
       {
 	assert(T >= num_type::Base2 && T <= num_type::Base64);
 	_store = string_to_bits(value);
@@ -238,14 +250,29 @@ namespace abits {
       
       return ss.str();
     };
-    
+
+    /**
+     * This function provides the canonical namespace
+     * constant for the numeral type.
+     */
+    std::string get_numeral_string()
+    {
+      return numeral_type[T];
+    };
+
+    /**
+     * This is the friend function for the << stream
+     * operator.  It emits the bits_to_string()
+     * function result in to the character stream.
+     *
+     */
     friend std::ostream& operator<< <>(std::ostream& os,
-				       const base_enc<T>& obj);
+				       const base64_enc<T>& obj);
   };
   
   template<int N>
     std::ostream& operator<<(std::ostream& os,
-			     const base_enc<N>& obj)
+			     const base64_enc<N>& obj)
     {
       os << obj.bits_to_string();
       return os;
