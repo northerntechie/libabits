@@ -5,11 +5,20 @@
  * encoded alphabets, that includes the following built-in
  * alphabets:
  * 
- * - Binary                    2 bits/symbol
- * - Ternary, Octal            3 bits/symbol
- * - Quaternary, Hexadecimal   4 bits/symbol
- * - Quinary, Duotrigesimal    5 bits/symbol
- * - Senary, Tetrasexagesimal  6 bits/symbol
+ * - Base2    1 bit/symbol
+ * - Base4    2 bits/symbol
+ * - Base8    3 bits/symbol
+ * - Base16   4 bits/symbol
+ * - Base32   5 bits/symbol
+ * - Base64   6 bits/symbol
+ *
+ * Each base smaller than the largest Base64 is a subset of the Base64
+ * character encoding.  Specifically, the Base16 is not a hexamdecimal
+ * enumeration, i.e. 0-9,a-f.  Base16 is the first 16 characters of
+ * the larger Base64 encoding library.  The intent of the library is
+ * to store the Base64 (or smaller) encoding with the minimum amount 
+ * of bits required using no compression.  The data store for this 
+ * implementation is std::vector<bool>.
  *
  * The library is contained within a single include file (this file)
  * and is easily included in a project.
@@ -75,7 +84,7 @@ namespace abits {
       {60,'8'},{61,'9'},{62,'+'},{63,'/'}
     };
 
-  constexpr int base64_size = sizeof(base64_code_char) / sizeof(std::pair<int,int>);
+  constexpr size_t base64_size = sizeof(base64_code_char) / sizeof(std::pair<int,int>);
 
   const static char get_char(int code, int range = base64_size-1)
   {
@@ -109,6 +118,7 @@ namespace abits {
   }
 
   const std::string numeral_type[]{
+    ""s,
       "abits::num_type::Base2"s,
       "abits::num_type::Base4"s,
       "abits::num_type::Base8"s,
@@ -260,16 +270,16 @@ namespace abits {
       return numeral_type[T];
     };
 
-    /**
-     * This is the friend function for the << stream
-     * operator.  It emits the bits_to_string()
-     * function result in to the character stream.
-     *
-     */
     friend std::ostream& operator<< <>(std::ostream& os,
 				       const base64_enc<T>& obj);
   };
-  
+
+  /**
+   * This is the friend function for the << stream
+   * operator.  It emits the bits_to_string()
+   * function result in to the character stream.
+   *
+   */
   template<int N>
     std::ostream& operator<<(std::ostream& os,
 			     const base64_enc<N>& obj)

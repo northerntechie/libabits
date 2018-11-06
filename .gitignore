@@ -6,3 +6,4 @@ src/tests/*~
 CMakeCache.txt
 libabits_tests
 docs/
+README.html

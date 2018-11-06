@@ -13,6 +13,7 @@
 #include <functional>
 #include <sstream>
 #include <libabits.hpp>
+#include <cassert>
 
 using namespace std::literals;
 
@@ -71,56 +72,51 @@ std::string process(const bool test,
   return ss.str();
 }
 
+// TODO(): Simplify
 template<typename O, typename T, typename R>
-void runObjectTest<T>(T obj, const R result, const std::string title)
+bool runObjectTest(O obj,
+		   const std::vector<R> results,
+		   const std::vector<std::string> titles)
 {
-  std::cout << title << "\n";
-  std::cout << process(test<std::string,std::string>
-		       (test1.bits_to_string(),
-			"ABAAAAB"s),
-		       "test1.bits_to_string()"s);
-  std::cout << process(test<std::string,std::string>
-		       (test1.bitstring(),
-			"1000010"s),
-		       "test1.bitstring()"s);
-  std::cout << process(test<std::string,std::string>
-		       (test1.get_numeral_string(),
-			"abits::num_type::Base2"s),
-		       "test1.get_numeral_string()"s);
-  
+  bool retVal = true;
+  std::string result = process(test<T,R>
+		       (obj.bits_to_string(),
+			results[0]),
+		       titles[0]);
+  if(result == "Failed"s) retVal = false;
+  std::cout << result;
+  result = process(test<T,std::string>
+		   (obj.bitstring(),
+		    results[1]),
+		   titles[1]);
+  if(result == "Failed"s) retVal = false;
+  std::cout << result;
+  result = process(test<std::string,std::string>
+		   (obj.get_numeral_string(),
+		    results[2]),
+		   titles[2]);
+  if(result == "Failed"s) retVal = false;
+  std::cout << result;
+
+  return retVal;
 };
 
 int main()
 {
   // Base2 Tests
-  abits::base64_enc<abits::num_type::Base2> test1{"ABAAAAB"};
-
-  std::cout << "abits::num_type::Base2 test1{\"ABAAAAB\"}:\n";
-  std::cout << process(test<std::string,std::string>
-		       (test1.bits_to_string(),
-			"ABAAAAB"s),
-		       "test1.bits_to_string()"s);
-  std::cout << process(test<std::string,std::string>
-		       (test1.bitstring(),
-			"1000010"s),
-		       "test1.bitstring()"s);
-  std::cout << process(test<std::string,std::string>
-		       (test1.get_numeral_string(),
-			"abits::num_type::Base2"s),
-		       "test1.get_numeral_string()"s);
-  
+  abits::base64_enc<abits::num_type::Base2> testBase2{"ABAAAAB"};
+  runObjectTest<abits::base64_enc<abits::num_type::Base2>,
+		std::string,std::string>
+    (testBase2,
+    {"ABAAAAB"s,"1000010"s,"abits::num_type::Base2"s},
+    {"test1.bits_to_string()"s,"test1.bitstring()"s,"test1.get_numeral_string()"s});
+	 
   // Base4 Tests
-  abits::base64_enc<abits::num_type::Base4> test2{"ABCDCBA"};
-  std::cout << "abits::num_type::Base4 test2{\"ABCDCBA\"}:\n";
-  std::cout << process(test<std::string,std::string>
-		       (test2.bits_to_string(),
-			"ABCDCBA"s),
-		       "test2.bits_to_string()"s);
-  std::cout << process(test<std::string,std::string>
-		       (test2.bitstring(),
-			"00100111011000"s),
-		       "test2.bitstring()"s);
-  
-
+  abits::base64_enc<abits::num_type::Base4> testBase4{"ABCDCBA"};
+  runObjectTest<abits::base64_enc<abits::num_type::Base4>,
+		std::string,std::string>
+    (testBase4,
+    {"ABCDCBA"s,"00100111011000"s,"abits::num_type::Base4"s},
+    {"test2.bits_to_string()"s,"test2.bitstring()"s,"test2.get_numeral_string()"s});  
   
 }
