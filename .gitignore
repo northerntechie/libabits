@@ -7,3 +7,5 @@ CMakeCache.txt
 libabits_tests
 docs/
 README.html
+cmake_install.cmake
+Makefile
