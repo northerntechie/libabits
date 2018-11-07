@@ -44,18 +44,24 @@
 
 using namespace std::literals;
 
-namespace abits {  
-  namespace num_type {
-    // Numeral system type constants
-    // Integral value is the number of bits, length of bit field
-    constexpr int Base2 = 1;
-    constexpr int Base4 = 2;
-    constexpr int Base8 = 3;
-    constexpr int Base16 = 4;
-    constexpr int Base32 = 5;
-    constexpr int Base64 = 6;
-  }
+namespace abits {
 
+  /**
+   * Numeral system type constants
+   * Integral value is the number of bits, length of bit field
+   */
+  struct num_type {
+    constexpr static int Base2 = 1;
+    constexpr static int Base4 = 2;
+    constexpr static int Base8 = 3;
+    constexpr static int Base16 = 4;
+    constexpr static int Base32 = 5;
+    constexpr static int Base64 = 6;
+  };
+
+  /**
+   * Hexadecimal code-char map
+   */
   const std::map<int,char> hex_code_char =
     {
       {0,'0'},{1,'1'},{2,'2'},{3,'3'},
@@ -63,10 +69,12 @@ namespace abits {
       {8,'8'},{9,'9'},{10,'a'},{11,'b'},
       {12,'c'},{13,'d'},{14,'e'},{15,'f'}
     };
-  
-  // Base64 code to char (ASCII) const map
-  // All lower bases are subsets of the Base64
-  // numeral type.
+
+  /**
+   * Base64 code to char (ASCII) const map
+   * All lower bases are subsets of the Base64
+   * numeral type.
+   */
   const std::map<int,char> base64_code_char =
     {                                               
       {0,'A'},{1,'B'},{2,'C'},{3,'D'},{4,'E'},      
